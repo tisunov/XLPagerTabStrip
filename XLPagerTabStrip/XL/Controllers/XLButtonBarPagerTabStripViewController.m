@@ -93,7 +93,7 @@
 
 -(void)viewDidAppear:(BOOL)animated
 {
-    [super viewWillAppear:animated];
+    [super viewDidAppear:animated];
     self.isViewAppearing = NO;
 }
 
