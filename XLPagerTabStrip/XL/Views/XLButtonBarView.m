@@ -25,6 +25,7 @@
 
 
 #import "XLButtonBarView.h"
+#import "XLButtonBarViewCell.h"
 
 @interface XLButtonBarView ()
 
@@ -73,6 +74,15 @@
     }
 }
 
+- (void)setSelectedOptionIndex:(NSUInteger)selectedOptionIndex {
+    XLButtonBarViewCell *oldCell = (XLButtonBarViewCell *)[self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:_selectedOptionIndex inSection:0]];
+    XLButtonBarViewCell *newCell = (XLButtonBarViewCell *)[self cellForItemAtIndexPath:[NSIndexPath indexPathForItem:selectedOptionIndex inSection:0]];
+    
+    oldCell.label.textColor = self.labelTextColor;
+    newCell.label.textColor = self.labelSelectedTextColor;
+    
+    _selectedOptionIndex = selectedOptionIndex;
+}
 
 -(void)moveToIndex:(NSUInteger)index animated:(BOOL)animated swipeDirection:(XLPagerTabStripDirection)swipeDirection pagerScroll:(XLPagerScroll)pagerScroll
 {

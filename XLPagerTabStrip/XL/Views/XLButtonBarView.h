@@ -46,6 +46,8 @@ typedef NS_ENUM(NSUInteger, XLSelectedBarAlignment) {
 @property (nonatomic) CGFloat selectedBarHeight;
 @property (nonatomic) XLSelectedBarAlignment selectedBarAlignment;
 @property UIFont * labelFont;
+@property UIColor * labelTextColor;
+@property UIColor * labelSelectedTextColor;
 @property NSUInteger leftRightMargin;
 
 -(void)moveToIndex:(NSUInteger)index animated:(BOOL)animated swipeDirection:(XLPagerTabStripDirection)swipeDirection pagerScroll:(XLPagerScroll)pagerScroll;

@@ -77,12 +77,19 @@
     if (!self.buttonBarView.dataSource){
         self.buttonBarView.dataSource = self;
     }
-    self.buttonBarView.labelFont = [UIFont boldSystemFontOfSize:18.0f];
+    self.buttonBarView.labelFont = [UIFont boldSystemFontOfSize:14.0f];
+    self.buttonBarView.labelTextColor = [UIColor darkGrayColor];
     self.buttonBarView.leftRightMargin = 8;
     self.buttonBarView.scrollsToTop = NO;
     UICollectionViewFlowLayout *flowLayout = (id)self.buttonBarView.collectionViewLayout;
     flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     self.buttonBarView.showsHorizontalScrollIndicator = NO;
+    
+    CALayer *bottomBorderLayer = [CALayer layer];
+    bottomBorderLayer.borderColor = [UIColor colorWithRed:0.784 green:0.780 blue:0.800 alpha:1.000].CGColor;
+    bottomBorderLayer.borderWidth = 0.25;
+    bottomBorderLayer.frame = CGRectMake(0, self.buttonBarView.frame.size.height - 1, self.buttonBarView.frame.size.width, 1);
+    [self.buttonBarView.layer addSublayer:bottomBorderLayer];
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -177,7 +184,7 @@
         // and set an appropriate frame. The buttonBarView gets added to to the view in viewDidLoad:
         UICollectionViewFlowLayout *flowLayout = [[UICollectionViewFlowLayout alloc] init];
         flowLayout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
-        flowLayout.sectionInset = UIEdgeInsetsMake(0, 35, 0, 35);
+        flowLayout.sectionInset = UIEdgeInsetsMake(0, 25, 0, 25);
         _buttonBarView = [[XLButtonBarView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 44.0f) collectionViewLayout:flowLayout];
         _buttonBarView.backgroundColor = [UIColor orangeColor];
         _buttonBarView.selectedBar.backgroundColor = [UIColor blackColor];
@@ -211,6 +218,7 @@
         
         for (UIViewController<XLPagerTabStripChildItem> *childController in self.pagerTabStripChildViewControllers)
         {
+            // FIXME: Don't create UILabel just to measture cell width
             UILabel *label = [[UILabel alloc] init];
             label.translatesAutoresizingMaskIntoConstraints = NO;
             label.font = self.buttonBarView.labelFont;
@@ -320,6 +328,7 @@
         if (self.changeCurrentIndexBlock) {
             XLButtonBarViewCell *oldCell = (XLButtonBarViewCell*)[self.buttonBarView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.currentIndex != fromIndex ? fromIndex : toIndex inSection:0]];
             XLButtonBarViewCell *newCell = (XLButtonBarViewCell*)[self.buttonBarView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.currentIndex inSection:0]];
+
             self.changeCurrentIndexBlock(oldCell, newCell, YES);
         }
     }
@@ -363,14 +372,18 @@
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
     //There's nothing to do if we select the current selected tab
-	if (indexPath.item == self.currentIndex)
-		return;
-	
+    if (indexPath.item == self.currentIndex)
+        return;
+    
     [self.buttonBarView moveToIndex:indexPath.item animated:YES swipeDirection:XLPagerTabStripDirectionNone pagerScroll:XLPagerScrollYES];
     self.shouldUpdateButtonBarView = NO;
     
     XLButtonBarViewCell *oldCell = (XLButtonBarViewCell*)[self.buttonBarView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:self.currentIndex inSection:0]];
+    oldCell.label.textColor = self.buttonBarView.labelTextColor;
+    
     XLButtonBarViewCell *newCell = (XLButtonBarViewCell*)[self.buttonBarView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:indexPath.item inSection:0]];
+    newCell.label.textColor = self.buttonBarView.labelSelectedTextColor;
+    
     if (self.isProgressiveIndicator) {
         if (self.changeCurrentIndexProgressiveBlock) {
             self.changeCurrentIndexProgressiveBlock(oldCell, newCell, 1, YES, YES);
@@ -403,7 +416,9 @@
     XLButtonBarViewCell * buttonBarCell = (XLButtonBarViewCell *)cell;
     UIViewController<XLPagerTabStripChildItem> * childController =   [self.pagerTabStripChildViewControllers objectAtIndex:indexPath.item];
     
-    [buttonBarCell.label setText:childController.title];
+    buttonBarCell.label.font = self.buttonBarView.labelFont;
+    buttonBarCell.label.textColor = indexPath.row == self.currentIndex ? self.buttonBarView.labelSelectedTextColor : self.buttonBarView.labelTextColor;
+    buttonBarCell.label.text = childController.title;
     
     if (self.isProgressiveIndicator) {
         if (self.changeCurrentIndexProgressiveBlock) {
