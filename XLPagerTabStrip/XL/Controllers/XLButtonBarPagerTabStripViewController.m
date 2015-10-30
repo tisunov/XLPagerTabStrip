@@ -138,9 +138,18 @@
     if (self.currentIndex > 0 && self.buttonBarView.contentOffset.x == 0) {
         [self.buttonBarView moveToIndex:self.currentIndex animated:NO swipeDirection:XLPagerTabStripDirectionNone pagerScroll:XLPagerScrollNO];
     }
-    
 }
 
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    // When presenting for previewing with 3D Touch Peek, sequence of events changes and
+    // bar stays at offset 0 even if self.currentIndex non 0
+    if (self.currentIndex > 0 && self.buttonBarView.contentOffset.x == 0) {
+        [self.buttonBarView scrollToItemAtIndexPath:[NSIndexPath indexPathForRow:self.currentIndex inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
+    }
+}
 
 #pragma mark - View Rotation
 
