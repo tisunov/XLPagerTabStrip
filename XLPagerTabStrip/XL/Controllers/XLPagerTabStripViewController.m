@@ -99,7 +99,7 @@
     self.containerView.showsHorizontalScrollIndicator = NO;
     self.containerView.pagingEnabled = YES;
     
-    if (self.dataSource){
+    if (self.dataSource) {
         _pagerTabStripChildViewControllers = [self.dataSource childViewControllersForPagerTabStripViewController:self];
     }
 }
@@ -112,6 +112,7 @@
 -(void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+
     _lastSize = self.containerView.bounds.size;
     [self updateIfNeeded];
 }
@@ -296,7 +297,8 @@
 -(void)updateContent
 {
     if (!CGSizeEqualToSize(_lastSize, self.containerView.bounds.size)){
-        if (_lastSize.width != self.containerView.bounds.size.width){
+        if (_lastSize.width != self.containerView.bounds.size.width ||
+            (self.currentIndex != 0 && self.containerView.contentOffset.x == 0)){
             _lastSize = self.containerView.bounds.size;
             [self.containerView setContentOffset:CGPointMake([self pageOffsetForChildIndex:self.currentIndex], 0) animated:NO];
         }
@@ -305,7 +307,7 @@
         }
     }
     
-    NSArray * childViewControllers = self.pagerTabStripChildViewControllersForScrolling;
+    NSArray *childViewControllers = self.pagerTabStripChildViewControllersForScrolling;
     self.containerView.contentSize = CGSizeMake(CGRectGetWidth(self.containerView.bounds) * childViewControllers.count, self.containerView.contentSize.height);
     
     [childViewControllers enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {

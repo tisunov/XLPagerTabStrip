@@ -132,6 +132,13 @@
         // tab/cell may end up either skewed or off screen after a rotation otherwise)
         [self.buttonBarView moveToIndex:self.currentIndex animated:NO swipeDirection:XLPagerTabStripDirectionNone pagerScroll:XLPagerScrollOnlyIfOutOfScreen];
     }
+    
+    // When presenting for previewing with 3D Touch Peek, sequence of events changes and
+    // bar stays at offset 0 even if self.currentIndex non 0
+    if (self.currentIndex > 0 && self.buttonBarView.contentOffset.x == 0) {
+        [self.buttonBarView moveToIndex:self.currentIndex animated:NO swipeDirection:XLPagerTabStripDirectionNone pagerScroll:XLPagerScrollNO];
+    }
+    
 }
 
 
